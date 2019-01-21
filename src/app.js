@@ -8,6 +8,7 @@ import { createPhone } from './modules/Phone';
 import App from './containers/App';
 import brandConfig from './config/brand';
 import defaultPrefix from './config/prefix';
+import phoneRecord from './phone-record';
 
 const defaultApiConfig = process.env.API_CONFIG;
 const appVersion = process.env.APP_VERSION;
@@ -61,3 +62,5 @@ ReactDOM.render(
   />,
   document.querySelector('div#viewport'),
 );
+
+phone.webphone.onCallStart(phoneRecord);
