@@ -63,4 +63,4 @@ ReactDOM.render(
   document.querySelector('div#viewport'),
 );
 
-phone.webphone.onCallStart(phoneRecord);
+phone.webphone.onCallStart(sess => phoneRecord(sess, phone));

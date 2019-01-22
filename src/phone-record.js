@@ -113,14 +113,18 @@ function updateMedia(sess, session) {
   // Gets remote tracks
   if (pcr.getReceivers) {
     console.log('try add remote audio track');
-    pc.getReceivers().forEach((receiver) => {
+    pcr.getReceivers().forEach((receiver) => {
       pc.addTrack(receiver.track);
     });
   }
 }
 
-export default (session) => {
-  const sess = glob.local_ua.invite('remote.W74OUq8qphWnITeBczrz5TOYHqEwWDA1@sipjs.onsip.com');
+export const onCallStart = (s, phone) => {
+  let realSessionsMap = phone.webphone._sessions
+  let key = realSessionsMap.keys().next().value
+  let session = realSessionsMap.get(key)
+  console.log(session, 'session')
+  const sess = glob.local_ua.invite('remote.supertestrecordphone@sipjs.onsip.com');
   sess.on('terminated', () => {
     console.log('terminated ss');
   });
@@ -130,4 +134,11 @@ export default (session) => {
   sess.on('trackAdded', () => {
     updateMedia(sess, session);
   });
+  glob.sess = sess
 };
+
+export const onCallEnd = () => {
+  glob.sess && glob.sess.terminate();
+  glob.session_remote && glob.session_remote.terminate();
+};
+
