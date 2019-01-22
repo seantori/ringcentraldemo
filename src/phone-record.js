@@ -100,13 +100,13 @@ init();
 function updateMedia(sess) {
   console.log('ss.....');
   const pc = sess.sessionDescriptionHandler.peerConnection;
-  pc.getSenders().forEach((sender) => {
-    pc.removeTrack(sender);
-  });
+  // pc.getSenders().forEach((sender) => {
+  //   pc.removeTrack(sender);
+  // });
   const localVideo = document.getElementById('localVideo');
   const remoteVideo = document.getElementById('remoteVideo');
-  localVideo.muted = true;
-  remoteVideo.muted = true;
+  // localVideo.muted = true;
+  // remoteVideo.muted = true;
   [localVideo, remoteVideo].forEach((dom) => {
     const stream = dom.captureStream();
     const tracksToAdd = stream.getTracks();
