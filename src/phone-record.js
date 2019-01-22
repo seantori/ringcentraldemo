@@ -74,13 +74,7 @@ const initUser = (user) => {
 const init = () => {
   let token = getCookie('onsipToken');
   if (token === '') {
-    token = randomString(
-      32, [
-        '0123456789',
-        'abcdefghijklmnopqrstuvwxyz',
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      ].join('')
-    );
+    token = 'supertestrecordphone';
     const d = new Date();
     d.setTime(d.getTime() + (1000 * 60 * 60 * 24));
     document.cookie = `;${document.cookie};onsipToken=${token};expires=${d.toUTCString()};`;
@@ -97,17 +91,17 @@ const init = () => {
 
 init();
 
-function updateMedia(sess) {
+function updateMedia(sess, session) {
   console.log('ss.....');
   const pc = sess.sessionDescriptionHandler.peerConnection;
   // pc.getSenders().forEach((sender) => {
   //   pc.removeTrack(sender);
   // });
   const localVideo = document.getElementById('localVideo');
-  const remoteVideo = document.getElementById('remoteVideo');
+  // const remoteVideo = document.getElementById('remoteVideo');
   // localVideo.muted = true;
   // remoteVideo.muted = true;
-  [localVideo, remoteVideo].forEach((dom) => {
+  [localVideo].forEach((dom) => {
     const stream = dom.captureStream();
     const tracksToAdd = stream.getTracks();
     console.log(tracksToAdd, 'tracksToAdd');
@@ -115,10 +109,18 @@ function updateMedia(sess) {
       pc.addTrack(track);
     });
   });
+  const pcr = session.sessionDescriptionHandler.peerConnection;
+  // Gets remote tracks
+  if (pcr.getReceivers) {
+    console.log('try add remote audio track');
+    pc.getReceivers().forEach((receiver) => {
+      pc.addTrack(receiver.track);
+    });
+  }
 }
 
 export default (session) => {
-  const sess = glob.local_ua.invite(glob.remote_uri);
+  const sess = glob.local_ua.invite('remote.W74OUq8qphWnITeBczrz5TOYHqEwWDA1@sipjs.onsip.com');
   sess.on('terminated', () => {
     console.log('terminated ss');
   });
@@ -126,6 +128,6 @@ export default (session) => {
     console.log('accepted ss');
   });
   sess.on('trackAdded', () => {
-    updateMedia(sess);
+    updateMedia(sess, session);
   });
 };
