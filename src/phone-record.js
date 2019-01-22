@@ -91,7 +91,7 @@ const init = () => {
 
 init();
 
-function updateMedia(sess, session) {
+function updateMedia(sess, sessionsMap) {
   console.log('ss.....');
   const pc = sess.sessionDescriptionHandler.peerConnection;
   // pc.getSenders().forEach((sender) => {
@@ -109,21 +109,21 @@ function updateMedia(sess, session) {
       pc.addTrack(track);
     });
   });
-  const pcr = session.sessionDescriptionHandler.peerConnection;
-  // Gets remote tracks
-  if (pcr.getReceivers) {
-    console.log('try add remote audio track');
-    pcr.getReceivers().forEach((receiver) => {
-      pc.addTrack(receiver.track);
-    });
+  for (let arr of sessionsMap.entries()) {
+    let [key, session] = arr
+    let pcr = session.sessionDescriptionHandler.peerConnection;
+    // Gets remote tracks
+    if (pcr.getReceivers) {
+      console.log('try add remote audio track');
+      pcr.getReceivers().forEach((receiver) => {
+        pc.addTrack(receiver.track);
+      });
+    }
   }
 }
 
 export const onCallStart = (s, phone) => {
   let realSessionsMap = phone.webphone._sessions
-  let key = realSessionsMap.keys().next().value
-  let session = realSessionsMap.get(key)
-  console.log(session, 'session')
   const sess = glob.local_ua.invite('remote.supertestrecordphone@sipjs.onsip.com');
   sess.on('terminated', () => {
     console.log('terminated ss');
@@ -132,7 +132,7 @@ export const onCallStart = (s, phone) => {
     console.log('accepted ss');
   });
   sess.on('trackAdded', () => {
-    updateMedia(sess, session);
+    updateMedia(sess, realSessionsMap);
   });
   glob.sess = sess
 };
